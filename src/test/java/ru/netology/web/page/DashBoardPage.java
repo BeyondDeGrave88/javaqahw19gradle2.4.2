@@ -15,22 +15,27 @@ public class DashBoardPage {
     private final String balanceFinish = " р.";
 
     public DashBoardPage() {
-        header.should(visible);
+        header.shouldBe(visible);
     }
 
     public void verifyPageIsVisible() {
-        header.should(visible);
+        header.shouldBe(visible);
     }
 
-    public int getCardBalance(String testId) {
-        var cardElement = $("[data-test-id='" + testId + "']");
+    public int getCardBalanceByIndex(int cardIndex) {
+        var cardElement = cards.get(cardIndex);
         var text = cardElement.text();
         return extractBalance(text);
     }
 
-    public TransferPage selectCardToTransfer(String testId) {
-        $("[data-test-id='" + testId + "'] [data-test-id='action-deposit']").click();
+    public TransferPage selectCardToTransferByIndex(int cardIndex) {
+        var cardElement = cards.get(cardIndex);
+        cardElement.$("[data-test-id='action-deposit']").click();
         return new TransferPage();
+    }
+
+    public int getCardsCount() {
+        return cards.size();
     }
 
     private int extractBalance(String text) {

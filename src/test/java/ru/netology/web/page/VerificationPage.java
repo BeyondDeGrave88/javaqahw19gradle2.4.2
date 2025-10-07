@@ -17,13 +17,18 @@ public class VerificationPage {
     }
 
     public DashBoardPage validVerify(DataHelper.VerificationCode verificationCode) {
-        codeField.shouldBe(visible);
         codeField.setValue(verificationCode.getCode());
         verifyButton.click();
         return new DashBoardPage();
     }
 
-    public void verifyErrorIsVisible() {
-        errorNotification.should(visible);
+    public boolean verifyErrorIsVisibleWithText() {
+        try {
+            errorNotification.shouldBe(Condition.visible);
+            errorNotification.shouldHave(Condition.text("Ошибка!"));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

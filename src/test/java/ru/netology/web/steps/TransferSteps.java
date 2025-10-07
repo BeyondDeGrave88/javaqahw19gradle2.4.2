@@ -26,29 +26,17 @@ public class TransferSteps {
         dashboardPage = verificationPage.validVerify(verificationCode);
     }
 
-    @Когда("пользователь переводит {string} рублей с карты с номером {string} на свою {string} карту с главной страницы")
-    public void userTransfersMoney(String amount, String fromCardNumber, String toCardNumber) {
-        int transferAmount = Integer.parseInt(amount);
-        int targetCardIndex = Integer.parseInt(toCardNumber);
-
-        DataHelper.CardInfo targetCard = (targetCardIndex == 1) ?
-                DataHelper.getFirstCardInfo() : DataHelper.getSecondCardInfo();
-
-        TransferPage transferPage = dashboardPage.selectCardToTransfer(targetCard.getTestId());
-        dashboardPage = transferPage.makeTransfer(fromCardNumber, transferAmount);
+    @Когда("пользователь переводит {int} рублей с карты с номером {string} на свою {int} карту с главной страницы")
+    public void userTransfersMoney(int amount, String fromCardNumber, int toCardIndex) {
+        TransferPage transferPage = dashboardPage.selectCardToTransferByIndex(toCardIndex - 1);
+        dashboardPage = transferPage.makeTransfer(fromCardNumber, amount);
     }
 
-    @Тогда("баланс его {string} карты из списка на главной странице должен стать {string} рублей")
-    public void verifyCardBalance(String cardNumber, String expectedBalance) {
-        int cardIndex = Integer.parseInt(cardNumber);
-        int expectedBal = Integer.parseInt(expectedBalance);
+    @Тогда("баланс его {int} карты из списка на главной странице должен стать {int} рублей")
+    public void verifyCardBalance(int cardIndex, int expectedBalance) {
+        int actualBalance = dashboardPage.getCardBalanceByIndex(cardIndex - 1);
 
-        DataHelper.CardInfo card = (cardIndex == 1) ?
-                DataHelper.getFirstCardInfo() : DataHelper.getSecondCardInfo();
-
-        int actualBalance = dashboardPage.getCardBalance(card.getTestId());
-
-        assertEquals(expectedBal, actualBalance,
-                "Баланс карты " + cardIndex + " должен быть " + expectedBal + " рублей, но был " + actualBalance);
+        assertEquals(expectedBalance, actualBalance,
+                "Баланс карты " + cardIndex + " должен быть " + expectedBalance + " рублей, но был " + actualBalance);
     }
 }
